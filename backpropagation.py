@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from ANN_Project_Assets.Loading_Datasets import trainset, testset
+from ANN_Project_Assets.Loading_Datasets import get_trainset, get_testset
 
 
 def sigmoid(x):
@@ -13,8 +13,11 @@ def sig_pr(x):
 
 
 
-train_set = trainset()
-test_set = testset()
+train_set = get_trainset()
+test_set = get_testset()
+Xt = [i[0] for i in test_set]
+Yt = [i[1] for i in test_set]
+
 pics_count = 491
 train_set = train_set[:200]
 X = [i[0] for i in train_set]
@@ -89,6 +92,7 @@ for epoch in range(epochs):
             for m in range(grad_w1.shape[0]):
                 grad_b1[m, 0] += delta_2[m, 0] * A1[m, 0] * (1 - A1[m, 0])
 
+        # print(grad_w3)
         W_3 = W_3 - (learning_rate * (grad_w3 / batch_size))
         W_2 = W_2 - (learning_rate * (grad_w2 / batch_size))
         W_1 = W_1 - (learning_rate * (grad_w1 / batch_size))
@@ -117,16 +121,17 @@ plt.savefig('5_epoch_backpropagation.png')
 plt.show()
 corrects = 0
 
-for test_data in test_set:
-    a0 = test_data[0]
+for i, test_data in enumerate(Xt):
+    a0 = test_data
     a1 = sigmoid(W_1 @ a0 + b_1)
     a2 = sigmoid(W_2 @ a1 + b_2)
     a3 = sigmoid(W_3 @ a2 + b_3)
+    print(f"TEST : {Yt[i]}, PREDICT : {a3}")
 
     predicted_number = list(a3).index(max(a3))
-    real_number = list(test_data[1]).index(max(test_data[1]))
+    real_number = list(Yt[i]).index(1)
 
     if predicted_number == real_number:
         corrects += 1
-accuracy = corrects / 662
+accuracy = corrects / len(Xt)
 print("Accuracy = ", accuracy)

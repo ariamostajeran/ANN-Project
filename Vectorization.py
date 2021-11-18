@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from ANN_Project_Assets.Loading_Datasets import trainset, testset
+from ANN_Project_Assets.Loading_Datasets import get_trainset, get_testset
 
 
 def sigmoid(x):
@@ -47,18 +47,25 @@ def backpropagation(W_1, W_2, W_3, b_1, b_2, b_3, A1, A2, out, Y, X):
 
 pics_count = 491# 100 * 100
 
-W_1 = np.random.randn(150 * 102).reshape(150, 102)
-b_1 = np.zeros((150, 1))
-# print(W_1)
-# print(b_1)
-W_2 = np.random.randn(60 * 150).reshape(60, 150)
-b_2 = np.zeros((60, 1))
+test_set = get_testset()
+train_set = get_trainset()
 
-W_3 = np.random.randn(4 * 60).reshape(4, 60)
-b_3 = np.zeros((4, 1))
+feature_count = len(train_set[0][0])
 
-test_set = testset()
-train_set = trainset()
+print(feature_count)
+first_layer_neurons = 150
+second_layer_neurons = 60
+output_neurons = len(train_set[0][1])
+
+W_1 = np.random.randn(first_layer_neurons * feature_count).reshape(first_layer_neurons, feature_count)
+b_1 = np.zeros((first_layer_neurons, 1))
+
+W_2 = np.random.randn(second_layer_neurons * first_layer_neurons).reshape(second_layer_neurons, first_layer_neurons)
+b_2 = np.zeros((second_layer_neurons, 1))
+
+W_3 = np.random.randn(output_neurons * second_layer_neurons).reshape(output_neurons, second_layer_neurons)
+b_3 = np.zeros((output_neurons, 1))
+
 # print(len(test_set[0][0]))
 X = [i[0] for i in train_set]
 Y = [i[1] for i in train_set]
@@ -66,7 +73,7 @@ Y = [i[1] for i in train_set]
 Xt = [i[0] for i in test_set]
 Yt = [i[1] for i in test_set]
 
-feature_count = len(X[0])
+# feature_count = len(X[0])
 
 print(len(X))
 
@@ -97,6 +104,8 @@ for epoch in range(epochs):
             A1 = sigmoid(W_1 @ x + b_1)
             A2 = sigmoid(W_2 @ A1 + b_2)
             out = sigmoid(W_3 @ A2 + b_3)
+            # print(W_3.shape)
+
             gw1, gw2, gw3, gb1, gb2, gb3 = backpropagation(W_1, W_2, W_3, b_1, b_2, b_3, A1, A2, out
                                                                                        , y, x)
             grad_w1 += gw1
@@ -138,7 +147,6 @@ plt.show()
 corrects = 0
 
 
-
 for i, x in enumerate(Xt):
     A1 = sigmoid(W_1 @ x + b_1)
     A2 = sigmoid(W_2 @ A1 + b_2)
@@ -153,17 +161,3 @@ for i, x in enumerate(Xt):
 accuracy = corrects / len(Xt)
 print("TEST Accuracy = ", accuracy)
 corrects = 0
-
-# for test_data in train_set:
-#     a0 = test_data[0]
-#     a1 = sigmoid(W_1 @ a0 + b_1)
-#     a2 = sigmoid(W_2 @ a1 + b_2)
-#     a3 = sigmoid(W_3 @ a2 + b_3)
-#
-#     predicted_number = list(a3).index(max(a3))
-#     real_number = list(test_data[1]).index(max(test_data[1]))
-#
-#     if predicted_number == real_number:
-#         corrects += 1
-# accuracy = corrects / len(X)
-# print("TRAIN Accuracy = ", accuracy)
