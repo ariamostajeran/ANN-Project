@@ -36,19 +36,19 @@ def get_trainset():
 def get_testset():
 
     # loading test set features
-    f = open("Datasets/test_set_features.pkl", "rb")
+    f = open("Datasets/new_test_set_features.pkl", "rb")
     test_set_features2 = pickle.load(f)
     f.close()
 
     # reducing feature vector length
     features_STDs = np.std(a=test_set_features2, axis=0)
-    test_set_features = test_set_features2[:, features_STDs > 80.1]
+    test_set_features = test_set_features2[:, features_STDs > 84.1]
 
     # changing the range of data between 0 and 1
     test_set_features = np.divide(test_set_features, test_set_features.max())
 
     # loading test set labels
-    f = open("Datasets/test_set_labels.pkl", "rb")
+    f = open("Datasets/new_test_set_labels.pkl", "rb")
     test_set_labels = pickle.load(f)
     f.close()
 
